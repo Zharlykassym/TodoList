@@ -22,16 +22,14 @@ public class MainActivity extends AppCompatActivity {
     private Database database = Database.getInstance();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
         notesAdapter = new NotesAdapter();
-
         recyclerViewNotes.setAdapter(notesAdapter);
-//        recyclerViewNotes.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerViewNotes.setLayoutManager(new LinearLayoutManager(this)); // можно настроить через xml
 
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,43 +52,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showNotes() {
-        recyclerViewNotes.removeAllViews();
-        for (Note note : database.getNotes()
-        ) {
-            View view = getLayoutInflater().inflate(
-                    R.layout.note_item,
-                    recyclerViewNotes,
-                    false
-            );
-            /* При помощи getLayoutInflater и метода inflate мы из макета note_item создадим View элемент ViewGroup. Поскольку он им не был и был xml файлом в корне.*/
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    database.remove(note.getId());
-                    showNotes();
-                }
-            });
-
-            TextView textViewNote = view.findViewById(R.id.textViewNote);
-            textViewNote.setText(note.getText());
-
-            int colorResId; // здесь мы получаем id цвета
-            switch (note.getPriority()) {
-                case 0:
-                    colorResId = R.drawable.rounded_blue_background;
-                    break;
-                case 1:
-                    colorResId = R.drawable.rounded_yellow_background;
-                    break;
-                default:
-                    colorResId = R.drawable.rounded_red_background;
-            }
-            Drawable color = ContextCompat.getDrawable(this, colorResId); // здесь получаем сам цвет из id
-            textViewNote.setBackground(color);
-
-            recyclerViewNotes.addView(view);
-
-        }
+        notesAdapter.setNotes(database.getNotes());
     }
 }
