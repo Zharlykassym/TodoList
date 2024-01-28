@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="dark">#2B2B2B</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="priorityRed">#EF5350</color>
+    <color name="priorityYellow">#FFCA28</color>
+    <color name="priorityGreen">#66BB6A</color>
+    <color name="priorityBlue">#42A5F5</color>
+    <color name="saveButton">#1AA0DC</color>
+    <color name="dark_blue">#1AA0DC</color>
+</resources>
