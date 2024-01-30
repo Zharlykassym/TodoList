@@ -23,7 +23,6 @@ public class Database {
             Note note = new Note(i, "Note " + i, random.nextInt(3));
             notes.add(note);
         }
-
     }
 
 
