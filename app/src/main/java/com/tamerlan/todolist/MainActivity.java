@@ -3,6 +3,7 @@ package com.tamerlan.todolist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,9 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewNotes;
     private FloatingActionButton buttonAddNote;
     private NotesAdapter notesAdapter;
-//    private Database database = Database.getInstance();
-    private Handler handler = new Handler(Looper.getMainLooper());
-
     private NoteDatabase noteDatabase;
 
     @Override
@@ -37,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         noteDatabase = NoteDatabase.getInstance(getApplication());
         initViews();
         notesAdapter = new NotesAdapter();
+
         notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
             @Override
             public void onNoteClick(Note note) {
@@ -45,7 +44,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         recyclerViewNotes.setAdapter(notesAdapter);
-//        recyclerViewNotes.setLayoutManager(new LinearLayoutManager(this)); // можно настроить через xml
+
+
+        noteDatabase.notesDao().getNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                notesAdapter.setNotes(notes);
+            }
+        });
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(
@@ -68,18 +74,10 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Note note = notesAdapter.getNotes().get(position);
-//                        database.remove(note.getId());
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 noteDatabase.notesDao().remove(note.getId());
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showNotes();
-                                    }
-                                });
-
                             }
                         });
                         thread.start();
@@ -98,33 +96,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showNotes();
-    }
-
     private void initViews() {
         recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
         buttonAddNote = findViewById(R.id.buttonAddNote);
     }
 
-    private void showNotes() {
-//        notesAdapter.setNotes(database.getNotes());
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Note> notes = noteDatabase.notesDao().getNotes();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        notesAdapter.setNotes(notes);
-                    }
-                });
-
-            }
-        });
-        thread.start();
-
-    }
 }
