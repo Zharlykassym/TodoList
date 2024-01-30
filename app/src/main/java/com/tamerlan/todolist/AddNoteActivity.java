@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private RadioButton radioButtonMedium;
     private RadioButton radioButtonHigh;
     private Button buttonSave;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     //        private Database database = Database.getInstance();
     private NoteDatabase noteDatabase;
@@ -56,12 +59,25 @@ public class AddNoteActivity extends AppCompatActivity {
             text = editTextInputNote.getText().toString().trim();
             Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show();
             int priority = getPriority();
-//            int id = database.getNotes().size();
-            Note note = new Note(0, text, priority);
+//            int id = database.getNotes().size(); // временное добавление id для теста виртуальной базы данных для теста приложения
+            Note note = new Note(text, priority);
 //            database.add(note);
-            noteDatabase.notesDao().add(note);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    noteDatabase.notesDao().add(note);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    });
+                }
+            });
+            thread.start();
 
-            finish();
+
+
         }
 
     }

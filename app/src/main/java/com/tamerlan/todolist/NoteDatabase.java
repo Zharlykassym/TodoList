@@ -16,7 +16,7 @@ public abstract class NoteDatabase extends RoomDatabase {
                     NoteDatabase.class,
                     DB_NAME
             )
-                    .allowMainThreadQueries() // временное перекрытие главного потока для теста приложения
+//                    .allowMainThreadQueries() // временное перекрытие главного потока для теста приложения
                     .build();
         }
         return instance;
