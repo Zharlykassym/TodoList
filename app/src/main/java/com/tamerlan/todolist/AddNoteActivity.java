@@ -1,6 +1,8 @@
 package com.tamerlan.todolist;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,21 +18,25 @@ import android.widget.Toast;
 
 public class AddNoteActivity extends AppCompatActivity {
     private EditText editTextInputNote;
-    private RadioGroup radioGroupPriority;
     private RadioButton radioButtonLow;
     private RadioButton radioButtonMedium;
-    private RadioButton radioButtonHigh;
-    private Button buttonSave;
-    private Handler handler = new Handler(Looper.getMainLooper());
 
-    //        private Database database = Database.getInstance();
-    private NoteDatabase noteDatabase;
+    private Button buttonSave;
+    private AddNoteViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
-        noteDatabase = NoteDatabase.getInstance(getApplication());
+        viewModel = new ViewModelProvider(this).get(AddNoteViewModel.class);
+        viewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean shouldClose) {
+                if (shouldClose){
+                    finish();
+                }
+            }
+        });
         initViews();
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,16 +44,12 @@ public class AddNoteActivity extends AppCompatActivity {
                 saveNote();
             }
         });
-
-
     }
 
     private void initViews() {
         editTextInputNote = findViewById(R.id.editTextInputNote);
-        radioGroupPriority = findViewById(R.id.radioGroupPriority);
         radioButtonLow = findViewById(R.id.radioButtonLow);
         radioButtonMedium = findViewById(R.id.radioButtonMedium);
-        radioButtonHigh = findViewById(R.id.radioButtonHigh);
         buttonSave = findViewById(R.id.buttonSave);
     }
 
@@ -59,27 +61,9 @@ public class AddNoteActivity extends AppCompatActivity {
             text = editTextInputNote.getText().toString().trim();
             Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show();
             int priority = getPriority();
-//            int id = database.getNotes().size(); // временное добавление id для теста виртуальной базы данных для теста приложения
             Note note = new Note(text, priority);
-//            database.add(note);
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    noteDatabase.notesDao().add(note);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    });
-                }
-            });
-            thread.start();
-
-
-
+            viewModel.saveNote(note);
         }
-
     }
 
     private int getPriority() {

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Dao
 public interface NotesDao { //DataAccessObject
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY id DESC")
     LiveData<List<Note>> getNotes();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
