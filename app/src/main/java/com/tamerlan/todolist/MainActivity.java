@@ -2,6 +2,7 @@ package com.tamerlan.todolist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -15,8 +16,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,16 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton buttonAddNote;
     private NotesAdapter notesAdapter;
     private MainViewModel viewModel;
+
+    private ConstraintLayout constraintLayoutMain;
+    private ConstraintLayout constraintLayoutAddNote;
+
+    private EditText editTextInputNote;
+    private RadioButton radioButtonLow;
+    private RadioButton radioButtonMedium;
+
+    private Button buttonSave;
+    private AddNoteViewModel viewModel1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +92,33 @@ public class MainActivity extends AppCompatActivity {
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = AddNoteActivity.newIntent(MainActivity.this);
-                startActivity(intent);
+                if (constraintLayoutAddNote.getVisibility() == View.GONE) {
+                    constraintLayoutAddNote.setVisibility(View.VISIBLE);
+                } else {
+                    constraintLayoutAddNote.setVisibility(View.GONE);
+                }
+//                Intent intent = AddNoteActivity.newIntent(MainActivity.this);
+//                startActivity(intent);
+            }
+        });
+
+        viewModel1 = new ViewModelProvider(this).get(AddNoteViewModel.class);
+        viewModel1.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean shouldClose) {
+//                if (shouldClose){
+//                    finish();
+//                }
+                constraintLayoutAddNote.setVisibility(View.GONE);
+                EditText editText = constraintLayoutAddNote.findViewById(R.id.editTextInputNote);
+                editText.setText(null);
+            }
+        });
+        initViews();
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveNote();
             }
         });
     }
@@ -86,6 +126,37 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
         buttonAddNote = findViewById(R.id.buttonAddNote);
+        constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
+        constraintLayoutAddNote = findViewById(R.id.constraintLayoutAddNote);
+
+        editTextInputNote = findViewById(R.id.editTextInputNote);
+        radioButtonLow = findViewById(R.id.radioButtonLow);
+        radioButtonMedium = findViewById(R.id.radioButtonMedium);
+        buttonSave = findViewById(R.id.buttonSave);
     }
 
+    private void saveNote() {
+        String text;
+        if (editTextInputNote.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, R.string.error_field_empty, Toast.LENGTH_SHORT).show();
+        } else {
+            text = editTextInputNote.getText().toString().trim();
+            Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show();
+            int priority = getPriority();
+            Note note = new Note(text, priority);
+            viewModel1.saveNote(note);
+        }
+    }
+
+    private int getPriority() {
+        int priority;
+        if (radioButtonLow.isChecked()) {
+            priority = 0;
+        } else if (radioButtonMedium.isChecked()) {
+            priority = 1;
+        } else {
+            priority = 2;
+        }
+        return priority;
+    }
 }
