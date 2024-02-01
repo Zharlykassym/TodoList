@@ -1,4 +1,4 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.view;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;

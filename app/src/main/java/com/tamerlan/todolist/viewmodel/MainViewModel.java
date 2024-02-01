@@ -1,11 +1,13 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.viewmodel;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+
+import com.tamerlan.todolist.view.Note;
+import com.tamerlan.todolist.model.NoteDatabase;
 
 import java.util.List;
 

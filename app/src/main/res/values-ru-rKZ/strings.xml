@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Todo List</string>
+    <string name="high">Высокий</string>
+    <string name="low">Низкий</string>
+    <string name="save">Сохранить</string>
+    <string name="error_field_empty">Поле пустое</string>
+    <string name="success">Успешно</string>
+    <string name="today">Сегодня</string>
+    <string name="search">Быстрый поиск</string>
+    <string name="medium">Средний</string>
+    <string name="enter_note">Введите заметку:</string>
+</resources>

@@ -1,10 +1,13 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.model;
 
 import android.app.Application;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+
+import com.tamerlan.todolist.view.Note;
+
 @Database(entities = {Note.class}, version = 1, exportSchema = false)
 public abstract class NoteDatabase extends RoomDatabase {
     private static final String DB_NAME = "notes.db";

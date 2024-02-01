@@ -1,4 +1,4 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -7,14 +7,14 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.tamerlan.todolist.R;
+import com.tamerlan.todolist.viewmodel.AddNoteViewModel;
 
 public class AddNoteActivity extends AppCompatActivity {
     private EditText editTextInputNote;

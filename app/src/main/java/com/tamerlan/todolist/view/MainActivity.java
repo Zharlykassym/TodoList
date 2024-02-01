@@ -1,31 +1,27 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TextView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.tamerlan.todolist.R;
+import com.tamerlan.todolist.viewmodel.AddNoteViewModel;
+import com.tamerlan.todolist.viewmodel.MainViewModel;
 
 import java.util.List;
 
@@ -37,9 +33,13 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
 
     private ConstraintLayout constraintLayoutMain;
+
     private ConstraintLayout constraintLayoutAddNote;
 
     private EditText editTextInputNote;
+
+    private RadioGroup radioGroupPriority;
+
     private RadioButton radioButtonLow;
     private RadioButton radioButtonMedium;
 
@@ -106,12 +106,13 @@ public class MainActivity extends AppCompatActivity {
         viewModel1.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean shouldClose) {
-//                if (shouldClose){
+                if (shouldClose){
 //                    finish();
-//                }
-                constraintLayoutAddNote.setVisibility(View.GONE);
-                EditText editText = constraintLayoutAddNote.findViewById(R.id.editTextInputNote);
-                editText.setText(null);
+//                    constraintLayoutAddNote.setVisibility(View.GONE);
+                    editTextInputNote.setText(null);
+                    radioButtonLow.setChecked(true);
+                }
+
             }
         });
         initViews();
@@ -121,6 +122,26 @@ public class MainActivity extends AppCompatActivity {
                 saveNote();
             }
         });
+
+        radioGroupPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int colorResId; // здесь мы получаем id цвета
+                switch (getPriority()) {
+                    case 0:
+                        colorResId = R.drawable.rounded_blue_back_addnote;
+                        break;
+                    case 1:
+                        colorResId = R.drawable.rounded_yellow_back_addnote;
+                        break;
+                    default:
+                        colorResId = R.drawable.rounded_red_back_addnote;
+                }
+                Drawable color = ContextCompat.getDrawable(constraintLayoutAddNote.getContext(), colorResId); // здесь получаем сам цвет из id
+                constraintLayoutAddNote.setBackground(color);
+            }
+        });
+
     }
 
     private void initViews() {
@@ -130,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         constraintLayoutAddNote = findViewById(R.id.constraintLayoutAddNote);
 
         editTextInputNote = findViewById(R.id.editTextInputNote);
+
+        radioGroupPriority = findViewById(R.id.radioGroupPriority);
         radioButtonLow = findViewById(R.id.radioButtonLow);
         radioButtonMedium = findViewById(R.id.radioButtonMedium);
         buttonSave = findViewById(R.id.buttonSave);

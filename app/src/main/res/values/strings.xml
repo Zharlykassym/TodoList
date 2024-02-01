@@ -4,6 +4,10 @@
     <string name="medium">Medium</string>
     <string name="low">Low</string>
     <string name="save">Save</string>
-    <string name="error_field_empty">Поле пустое</string>
-    <string name="success">Успешно</string>
+    <string name="error_field_empty">Field is empty</string>
+    <string name="success">Success</string>
+    <string name="today">Today</string>
+    <string name="search">Quick search</string>
+    <string name="enter_note">Enter note:</string>
+
 </resources>

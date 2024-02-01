@@ -1,6 +1,6 @@
-package com.tamerlan.todolist;
+package com.tamerlan.todolist.model;
 
-import android.view.contentcapture.DataRemovalRequest;
+import com.tamerlan.todolist.view.Note;
 
 import java.util.ArrayList;
 import java.util.Random;
