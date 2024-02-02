@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Database {
+    /*this is virtual test database. The one is not used more*/
     private ArrayList<Note> notes = new ArrayList<>();
 
     private static Database instance = null;

@@ -12,6 +12,8 @@ import com.tamerlan.todolist.view.Note;
 public abstract class NoteDatabase extends RoomDatabase {
     private static final String DB_NAME = "notes.db";
     private static NoteDatabase instance = null;
+
+    /* Singleton realization */
     public static NoteDatabase getInstance(Application application){
         if(instance == null){
             instance = Room.databaseBuilder(
@@ -19,7 +21,6 @@ public abstract class NoteDatabase extends RoomDatabase {
                     NoteDatabase.class,
                     DB_NAME
             )
-//                    .allowMainThreadQueries() // временное перекрытие главного потока для теста приложения
                     .build();
         }
         return instance;

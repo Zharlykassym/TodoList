@@ -25,32 +25,21 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainViewModel extends AndroidViewModel {
     private NoteDatabase noteDatabase;
-
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private MutableLiveData<List<Note>> notes = new MutableLiveData<>();
 
+    /* Singleton initialization */
     public MainViewModel(@NonNull Application application) {
         super(application);
         noteDatabase = NoteDatabase.getInstance(application);
     }
 
+    /* LiveData for View layer*/
     public LiveData<List<Note>> getNotes() {
         return notes;
     }
 
-    public void refreshData(){
-        Disposable disposable = getNotesRx()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Note>>() {
-            @Override
-            public void accept(List<Note> notesFromDb) throws Throwable {
-                notes.setValue(notesFromDb);
-            }
-        });
-        compositeDisposable.add(disposable);
-    }
-
+    /* Converting List<Note> to Single<List<Note>> data type */
     private Single<List<Note>> getNotesRx(){
         return Single.fromCallable(new Callable<List<Note>>() {
             @Override
@@ -59,10 +48,22 @@ public class MainViewModel extends AndroidViewModel {
             }
         });
     }
-
+    /* MutableLiveData initialization from DB (List<Note> getNotes to start RxJava thread)*/
+    public void refreshData(){
+        Disposable disposable = getNotesRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Note>>() {
+                    @Override
+                    public void accept(List<Note> notesFromDb) throws Throwable {
+                        notes.setValue(notesFromDb);
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
 
     public void remove(Note note) {
-        Disposable disposable = removeRx(note)
+        Disposable disposable = removeRx(note) // Completable remove()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
@@ -75,6 +76,7 @@ public class MainViewModel extends AndroidViewModel {
         compositeDisposable.add(disposable);
     }
 
+    /* Converting remove() to Completable to start RxJava thread */
     private Completable removeRx(Note note){
         return Completable.fromAction(new Action() {
             @Override
@@ -82,7 +84,6 @@ public class MainViewModel extends AndroidViewModel {
                 noteDatabase.notesDao().remove(note.getId());
             }
         });
-
     }
 
     @Override

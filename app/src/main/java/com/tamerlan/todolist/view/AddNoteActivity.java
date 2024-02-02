@@ -17,6 +17,7 @@ import com.tamerlan.todolist.R;
 import com.tamerlan.todolist.viewmodel.AddNoteViewModel;
 
 public class AddNoteActivity extends AppCompatActivity {
+    /* class is not used, because the one is not called through Intent in MainActivity */
     private EditText editTextInputNote;
     private RadioButton radioButtonLow;
     private RadioButton radioButtonMedium;
@@ -29,7 +30,7 @@ public class AddNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
         viewModel = new ViewModelProvider(this).get(AddNoteViewModel.class);
-        viewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+        viewModel.getShouldCloseAddNoteTab().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean shouldClose) {
                 if (shouldClose){

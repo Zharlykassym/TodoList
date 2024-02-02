@@ -26,38 +26,28 @@ import com.tamerlan.todolist.viewmodel.MainViewModel;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
     private RecyclerView recyclerViewNotes;
     private FloatingActionButton buttonAddNote;
     private NotesAdapter notesAdapter;
     private MainViewModel viewModel;
-//
-    private ConstraintLayout constraintLayoutMain;
 
     private ConstraintLayout constraintLayoutAddNote;
-
     private EditText editTextInputNote;
-
     private RadioGroup radioGroupPriority;
-
     private RadioButton radioButtonLow;
     private RadioButton radioButtonMedium;
-
     private Button buttonSave;
     private AddNoteViewModel addNoteViewModel;
 
-
-
+    /* starting point of application*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         initViews();
+        /* ViewModels initialization */
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         addNoteViewModel = new ViewModelProvider(this).get(AddNoteViewModel.class);
-
-        notesAdapter = new NotesAdapter();
-        recyclerViewNotes.setAdapter(notesAdapter);
 
         viewModel.getNotes().observe(this, new Observer<List<Note>>() {
             @Override
@@ -66,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        notesAdapter = new NotesAdapter();
+        recyclerViewNotes.setAdapter(notesAdapter);
+
+        /* Swipe realization */
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(
                         0,
@@ -92,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
 
+        /* Work with buttons. (onClickListeners) */
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,10 +97,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        addNoteViewModel.getVisibility().observe(this, new Observer<Boolean>() {
+        /*not used onClickListener*/
+        buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(Boolean visible) {
-                if (visible){
+            public void onClick(View v) {
+                saveNote();
+            }
+        });
+
+        /*Work with ViewModels*/
+        addNoteViewModel.getAddNoteVisibility().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean addNoteShouldBeVisible) {
+                if (addNoteShouldBeVisible){
                     if (constraintLayoutAddNote.getVisibility() == View.GONE) {
                         constraintLayoutAddNote.setVisibility(View.VISIBLE);
                     } else {
@@ -114,16 +118,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //
-
-
-        addNoteViewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+        addNoteViewModel.getShouldCloseAddNoteTab().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean shouldClose) {
                 if (shouldClose){
-//                    finish();
-//                    constraintLayoutAddNote.setVisibility(View.GONE);
+//                    finish(); // used in case when we use Intent and is needed to close AddNoteActivity
                     viewModel.refreshData();
                     editTextInputNote.setText(null);
                     radioButtonLow.setChecked(true);
@@ -131,15 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        initViews();
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveNote();
-            }
-        });
 
-
+        /* additional feature. Used to change color of addNote field */
         radioGroupPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -158,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutAddNote.setBackground(color);
             }
         });
-
     }
 
     @Override
@@ -168,23 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initViews() {
-        recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
-        buttonAddNote = findViewById(R.id.buttonAddNote);
-        constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
-        constraintLayoutAddNote = findViewById(R.id.constraintLayoutAddNote);
-
-        //
-
-        editTextInputNote = findViewById(R.id.editTextInputNote);
-
-        radioGroupPriority = findViewById(R.id.radioGroupPriority);
-        radioButtonLow = findViewById(R.id.radioButtonLow);
-        radioButtonMedium = findViewById(R.id.radioButtonMedium);
-        buttonSave = findViewById(R.id.buttonSave);
-    }
-
-    //
     private void saveNote() {
         String text;
         if (editTextInputNote.getText().toString().trim().isEmpty()) {
@@ -197,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             addNoteViewModel.saveNote(note);
         }
     }
-
     private int getPriority() {
         int priority;
         if (radioButtonLow.isChecked()) {
@@ -208,5 +181,18 @@ public class MainActivity extends AppCompatActivity {
             priority = 2;
         }
         return priority;
+    }
+
+    /* Initialization of Views */
+    private void initViews() {
+        recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
+        buttonAddNote = findViewById(R.id.buttonAddNote);
+        constraintLayoutAddNote = findViewById(R.id.constraintLayoutAddNote);
+
+        editTextInputNote = findViewById(R.id.editTextInputNote);
+        radioGroupPriority = findViewById(R.id.radioGroupPriority);
+        radioButtonLow = findViewById(R.id.radioButtonLow);
+        radioButtonMedium = findViewById(R.id.radioButtonMedium);
+        buttonSave = findViewById(R.id.buttonSave);
     }
 }

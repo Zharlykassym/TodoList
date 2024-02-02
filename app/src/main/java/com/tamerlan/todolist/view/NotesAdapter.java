@@ -18,11 +18,9 @@ import java.util.List;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
     private List<Note> notes = new ArrayList<>();
-
     public List<Note> getNotes() {
         return new ArrayList<>(notes);
     }
-
     private OnNoteClickListener onNoteClickListener;
 
     public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
