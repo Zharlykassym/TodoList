@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton buttonAddNote;
     private NotesAdapter notesAdapter;
     private MainViewModel viewModel;
-
+//
     private ConstraintLayout constraintLayoutMain;
 
     private ConstraintLayout constraintLayoutAddNote;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton radioButtonMedium;
 
     private Button buttonSave;
-    private AddNoteViewModel viewModel1;
+    private AddNoteViewModel addNoteViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         initViews();
+        addNoteViewModel = new ViewModelProvider(this).get(AddNoteViewModel.class);
 
         notesAdapter = new NotesAdapter();
         recyclerViewNotes.setAdapter(notesAdapter);
@@ -92,18 +93,30 @@ public class MainActivity extends AppCompatActivity {
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (constraintLayoutAddNote.getVisibility() == View.GONE) {
-                    constraintLayoutAddNote.setVisibility(View.VISIBLE);
-                } else {
-                    constraintLayoutAddNote.setVisibility(View.GONE);
-                }
+                addNoteViewModel.makeVisible();
+
 //                Intent intent = AddNoteActivity.newIntent(MainActivity.this);
 //                startActivity(intent);
             }
         });
 
-        viewModel1 = new ViewModelProvider(this).get(AddNoteViewModel.class);
-        viewModel1.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+        addNoteViewModel.getVisibility().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean visible) {
+                if (visible){
+                    if (constraintLayoutAddNote.getVisibility() == View.GONE) {
+                        constraintLayoutAddNote.setVisibility(View.VISIBLE);
+                    } else {
+                        constraintLayoutAddNote.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+
+        //
+
+
+        addNoteViewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean shouldClose) {
                 if (shouldClose){
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 saveNote();
             }
         });
+
 
         radioGroupPriority.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -150,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
         constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
         constraintLayoutAddNote = findViewById(R.id.constraintLayoutAddNote);
 
+        //
+
         editTextInputNote = findViewById(R.id.editTextInputNote);
 
         radioGroupPriority = findViewById(R.id.radioGroupPriority);
@@ -158,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSave = findViewById(R.id.buttonSave);
     }
 
+    //
     private void saveNote() {
         String text;
         if (editTextInputNote.getText().toString().trim().isEmpty()) {
@@ -167,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show();
             int priority = getPriority();
             Note note = new Note(text, priority);
-            viewModel1.saveNote(note);
+            addNoteViewModel.saveNote(note);
         }
     }
 
