@@ -8,7 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.tamerlan.todolist.view.AddNoteActivity;
+import com.tamerlan.todolist.view.MainActivity;
 import com.tamerlan.todolist.view.Note;
 import com.tamerlan.todolist.model.NoteDatabase;
 import com.tamerlan.todolist.model.NotesDao;
@@ -16,6 +20,7 @@ import com.tamerlan.todolist.model.NotesDao;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -43,25 +48,32 @@ public class AddNoteViewModel extends AndroidViewModel {
     public LiveData<Boolean> getVisibility() {
         return shouldBeVisible;
     }
-
     public void makeVisible(){
         shouldBeVisible.setValue(true);
     }
 
     public void saveNote(Note note) {
-        Disposable disposable = notesDao.add(note)
-                .delay(5, TimeUnit.SECONDS)
+        Disposable disposable = saveNoteRx(note)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Throwable {
+
                         Log.d("AddNoteViewModel","subscribe");
                         shouldCloseScreen.setValue(true);
                     }
                 });
         compositeDisposable.add(disposable);
+    }
 
+    private Completable saveNoteRx(Note note){
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Throwable {
+                notesDao.add(note);
+            }
+        });
     }
 
     @Override

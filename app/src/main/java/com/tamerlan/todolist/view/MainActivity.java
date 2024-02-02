@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSave;
     private AddNoteViewModel addNoteViewModel;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 if (shouldClose){
 //                    finish();
 //                    constraintLayoutAddNote.setVisibility(View.GONE);
+                    viewModel.refreshData();
                     editTextInputNote.setText(null);
                     radioButtonLow.setChecked(true);
                 }
@@ -155,6 +158,13 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutAddNote.setBackground(color);
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.refreshData();
 
     }
 
