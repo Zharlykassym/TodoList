@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Boolean shouldClose) {
                 if (shouldClose){
 //                    finish(); // used in case when we use Intent and is needed to close AddNoteActivity
-                    viewModel.refreshData();
                     editTextInputNote.setText(null);
                     radioButtonLow.setChecked(true);
                 }
@@ -150,13 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutAddNote.setBackground(color);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.refreshData();
-
     }
 
     private void saveNote() {

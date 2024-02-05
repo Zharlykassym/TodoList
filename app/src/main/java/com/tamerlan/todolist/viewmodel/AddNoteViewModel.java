@@ -39,7 +39,7 @@ public class AddNoteViewModel extends AndroidViewModel {
     }
 
     public void saveNote(Note note) {
-        Disposable disposable = saveNoteRx(note) // Completable add()
+        Disposable disposable = notesDao.add(note) // Completable add()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
@@ -66,16 +66,6 @@ public class AddNoteViewModel extends AndroidViewModel {
         addNoteShouldBeVisible.setValue(true);
     }
 
-    /* Converting add() to Completable to start RxJava thread */
-    private Completable saveNoteRx(Note note){
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Throwable {
-//                notesDao.add(note);
-                throw new Exception();
-            }
-        });
-    }
 
     @Override
     protected void onCleared() {
